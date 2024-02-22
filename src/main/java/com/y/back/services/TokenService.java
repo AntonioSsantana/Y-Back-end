@@ -9,6 +9,9 @@ import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/*
+ * Token service.
+ */
 @Service
 public class TokenService {
   @Value("${api.security.token.secret}")

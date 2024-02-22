@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+/**
+ * Person service.
+ */
 @Service
 public class PersonService implements UserDetailsService {
   private PersonRepository personRepository;
@@ -20,6 +23,11 @@ public class PersonService implements UserDetailsService {
     this.personRepository = personRepository;
   }
   
+  /**
+   * Create a person with informations in object.
+   * Object @param person
+   * Return object @return
+   */
   public Person createPerson(Person person) {
     String hashedPassword = new BCryptPasswordEncoder().encode(person.getPassword());
     person.setPassword(hashedPassword);
@@ -27,6 +35,10 @@ public class PersonService implements UserDetailsService {
     return personRepository.save(person);
   }
 
+  /**
+   * Method that return a list of all persons registered.
+   * Returns a list of all persons @return
+   */
   public List<Person> getAllPersons() {
     if(personRepository.findAll().isEmpty()) {
       throw new NoRegisteredUsers();
@@ -37,6 +49,7 @@ public class PersonService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    return personRepository.findByUsername(username);
+    return personRepository.findByUsername(username)
+      .orElseThrow(() -> new UsernameNotFoundException(username));
   }
 }

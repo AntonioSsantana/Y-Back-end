@@ -59,18 +59,29 @@ public class PersonController {
     }
   }
 
+  /**
+   * Person login method, generate and return a token using a password and username.
+   * Object @param authDto
+   * Return token @return
+   */
   @PostMapping("/login")
   public ResponseEntity<ResponseDto<String>> login(@RequestBody AuthDto authDto) {
-    UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
-      authDto.username(), authDto.password());
-
-    Authentication auth = authenticationManager.authenticate(usernamePassword);
-
-    Person person = (Person) auth.getPrincipal();
-    String token = tokenService.generateToken(person);
-
-    ResponseDto<String> responseDto = new ResponseDto<String>("Authenticated!", token);
-
-    return ResponseEntity.status(HttpStatus.OK).body(responseDto);
+    try {
+      UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
+        authDto.username(), authDto.password());
+  
+      Authentication auth = authenticationManager.authenticate(usernamePassword);
+  
+      Person person = (Person) auth.getPrincipal();
+      String token = tokenService.generateToken(person);
+  
+      ResponseDto<String> res = new ResponseDto<String>("Authenticated!", token);
+  
+      return ResponseEntity.status(HttpStatus.OK).body(res);
+    } catch (Exception e) {
+      ResponseDto<String> res = new ResponseDto<String>(e.getMessage(), null);
+      
+      return ResponseEntity.status(404).body(res);
+    }
   }
 }

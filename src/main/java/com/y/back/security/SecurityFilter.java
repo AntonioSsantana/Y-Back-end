@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
   private final TokenService tokenService;
