@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,10 +49,10 @@ public class PersonController {
     try {
       Person rg = personService.createPerson(person);
 
-      PersonDto resPerson = new PersonDto(rg.getUsername(), rg.getEmail(), rg.getPassword(), rg.getCreatedDate(),
+      PersonDto resPerson = new PersonDto(rg.getUsername(), rg.getEmail(), rg.getCreatedDate(),
           rg.getCreatedTime(), rg.getRole());
 
-      ResponseDto<PersonDto> res = new ResponseDto<PersonDto>("Person created!", resPerson);
+      ResponseDto<PersonDto> res = new ResponseDto<PersonDto>("Created!", resPerson);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(res);
     } catch (Exception e) {
@@ -81,7 +84,27 @@ public class PersonController {
     } catch (Exception e) {
       ResponseDto<String> res = new ResponseDto<String>(e.getMessage(), null);
       
-      return ResponseEntity.status(404).body(res);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+    }
+  }
+
+  /**
+   * Get method thats return a object with informations by username.
+   * Username @param username
+   * Object @return
+   */
+  @GetMapping("/person/{username}")
+  public ResponseEntity<ResponseDto<UserDetails>> getUserByUsername(@PathVariable String username) {
+    try {
+      UserDetails person = personService.loadUserByUsername(username);
+
+      ResponseDto<UserDetails> res = new ResponseDto<UserDetails>("Found Sucessfully.", person);
+
+      return ResponseEntity.status(HttpStatus.OK).body(res);
+    } catch (Exception e) {
+      ResponseDto<UserDetails> res = new ResponseDto<UserDetails>("User not found.", null);
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
   }
 }
