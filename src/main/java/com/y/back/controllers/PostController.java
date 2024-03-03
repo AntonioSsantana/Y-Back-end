@@ -38,7 +38,7 @@ public class PostController {
     try {
       List<Post> posts = postService.getAllPosts();
       List<PostDto> ps = posts.stream().map((post) -> new PostDto(post.getId(),
-          post.getMessage(), post.getCreatedDate(), post.getPerson()))
+          post.getMessage(), post.getCreatedDate(), post.getCreatedTime(), post.getPerson()))
           .collect(Collectors.toList());
 
       ResponseDto<List<PostDto>> res = new ResponseDto<List<PostDto>>("Founded!", ps);
@@ -51,11 +51,12 @@ public class PostController {
     }
   }
 
-  @PostMapping("/{personId}/upload")
-  public ResponseEntity<ResponseDto<PostDto>> createPost(@RequestBody Post post, @PathVariable Integer personId) {
+  @PostMapping("/{username}/upload")
+  public ResponseEntity<ResponseDto<PostDto>> createPost(@RequestBody Post post, @PathVariable String username) {
     try {
-      Post ps = postService.createPost(post, personId);
-      PostDto postDto = new PostDto(ps.getId(), ps.getMessage(), ps.getCreatedDate(), ps.getPerson());
+      Post ps = postService.createPost(post, username);
+      PostDto postDto = new PostDto(ps.getId(), ps.getMessage(), ps.getCreatedDate(),
+          ps.getCreatedTime(), ps.getPerson());
       ResponseDto<PostDto> res = new ResponseDto<PostDto>("Post uploaded!", postDto);
 
       return ResponseEntity.status(HttpStatus.OK).body(res);

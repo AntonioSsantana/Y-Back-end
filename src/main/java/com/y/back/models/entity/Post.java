@@ -1,6 +1,8 @@
 package com.y.back.models.entity;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,6 +28,9 @@ public class Post {
   @Column( name = "created_date")
   private LocalDate createdDate;
 
+  @Column( name = "created_time")
+  private LocalTime createdTime;
+
   @ManyToOne
   @JoinColumn( name = "person_id")
   private Person person;
@@ -35,11 +40,12 @@ public class Post {
    * Post id @param id
    * Post message @param message
    */
-  public Post(Integer id, String message, LocalDate createdDate, Person person) {
+  public Post(Integer id, String message, LocalDate createdDate, LocalTime creatTime, Person person) {
     this.id = id;
     this.message = message;
     this.createdDate = createdDate;
     this.person = person;
+    this.createdTime = creatTime;
   }
 
   public Post(){
@@ -67,6 +73,14 @@ public class Post {
 
   public void setCreatedDate(LocalDate createdDate) {
     this.createdDate = createdDate;
+  }
+
+  public LocalTime getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(LocalTime createdTime) {
+    this.createdTime = createdTime;
   }
 
   public Person getPerson() {

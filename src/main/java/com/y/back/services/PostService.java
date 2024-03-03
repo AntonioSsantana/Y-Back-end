@@ -31,8 +31,8 @@ public class PostService {
    * Person id @param personId
    * Return post object @return
    */
-  public Post createPost(Post post, Integer personId) {
-    Optional<Person> personById = personRepository.findById(personId);
+  public Post createPost(Post post, String username) {
+    Optional<Person> personById = personRepository.findByUsername(username);
 
     if(!personById.isPresent()) {
       throw new UserNotFoundException();
