@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,13 +37,30 @@ public class PostController {
   public ResponseEntity<ResponseDto<List<PostDto>>> getAllPosts() {
     try {
       List<Post> posts = postService.getAllPosts();
-      List<PostDto> ps = posts.stream().map((post) -> new PostDto(post.getId(), post.getMessage(), post.getCreatedDate()))
-      .collect(Collectors.toList());
+      List<PostDto> ps = posts.stream().map((post) -> new PostDto(post.getId(),
+          post.getMessage(), post.getCreatedDate(), post.getPerson()))
+          .collect(Collectors.toList());
+
       ResponseDto<List<PostDto>> res = new ResponseDto<List<PostDto>>("Founded!", ps);
 
       return ResponseEntity.status(HttpStatus.OK).body(res);
     } catch (Exception e) {
       ResponseDto<List<PostDto>> res = new ResponseDto<List<PostDto>>(e.getMessage(), null);
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+    }
+  }
+
+  @PostMapping("/{personId}/upload")
+  public ResponseEntity<ResponseDto<PostDto>> createPost(@RequestBody Post post, @PathVariable Integer personId) {
+    try {
+      Post ps = postService.createPost(post, personId);
+      PostDto postDto = new PostDto(ps.getId(), ps.getMessage(), ps.getCreatedDate(), ps.getPerson());
+      ResponseDto<PostDto> res = new ResponseDto<PostDto>("Post uploaded!", postDto);
+
+      return ResponseEntity.status(HttpStatus.OK).body(res);
+    } catch (Exception e) {
+      ResponseDto<PostDto> res = new ResponseDto<PostDto>(e.getMessage(), null);
 
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }

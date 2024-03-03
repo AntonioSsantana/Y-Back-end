@@ -1,9 +1,13 @@
 package com.y.back.services;
 
 import com.y.back.errors.NoPostsFound;
+import com.y.back.errors.UserNotFoundException;
+import com.y.back.models.entity.Person;
 import com.y.back.models.entity.Post;
+import com.y.back.models.repository.PersonRepository;
 import com.y.back.models.repository.PostRepository;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +17,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class PostService {
   private final PostRepository postRepository;
+  private final PersonRepository personRepository;
 
   @Autowired
-  public PostService(PostRepository postRepository) {
+  public PostService(PostRepository postRepository, PersonRepository personRepository) {
     this.postRepository = postRepository;
+    this.personRepository = personRepository;
   }
 
-  public Post createPost(Post post) {
+  /**
+   * Method that return a post object and insert the personId in database.
+   * Post @param post
+   * Person id @param personId
+   * Return post object @return
+   */
+  public Post createPost(Post post, Integer personId) {
+    Optional<Person> personById = personRepository.findById(personId);
+
+    if(!personById.isPresent()) {
+      throw new UserNotFoundException();
+    }
+
+    Person person = personById.get();
+    post.setPerson(person);
     return postRepository.save(post);
   }
 
