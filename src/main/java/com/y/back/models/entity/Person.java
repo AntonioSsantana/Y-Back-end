@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -45,6 +46,10 @@ public class Person implements UserDetails {
   @Column(name = "role")
   private String role;
 
+  @OneToMany(mappedBy = "person")
+  @JsonIgnore
+  private List<Post> posts;
+
   /**
    * Constructor.
    * Id @param id
@@ -57,7 +62,7 @@ public class Person implements UserDetails {
    * Role @param role
    */
   public Person(Integer id, String username, String password, String email, Integer age, 
-      LocalDate createdDate, LocalTime createdTime, String role) {
+      LocalDate createdDate, LocalTime createdTime, String role, List<Post> posts) {
     this.id = id;
     this.username = username;
     this.password = password;
@@ -66,6 +71,7 @@ public class Person implements UserDetails {
     this.createdDate = createdDate;
     this.createdTime = createdTime;
     this.role = role;
+    this.posts = posts;
   }
 
   public Person(){
@@ -117,6 +123,14 @@ public class Person implements UserDetails {
 
   public void setRole(String role) {
     this.role = role;
+  }
+
+  public List<Post> getPosts() {
+    return posts;
+  }
+
+  public void setPosts(List<Post> posts) {
+    this.posts = posts;
   }
 
   @Override
