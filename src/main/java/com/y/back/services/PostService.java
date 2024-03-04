@@ -54,4 +54,16 @@ public class PostService {
 
     return postRepository.findAll();
   }
+
+  public List<Post> getPostsByUsername(String username) {
+    Optional<Person> person = personRepository.findByUsername(username);
+
+    if(!person.isPresent()) {
+      throw new UserNotFoundException();
+    }
+
+    Person prs = person.get();
+
+    return postRepository.findPostsByPersonId(prs.getId());
+  }
 }

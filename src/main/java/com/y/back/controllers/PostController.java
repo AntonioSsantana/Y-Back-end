@@ -66,4 +66,22 @@ public class PostController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
   }
+
+  @GetMapping("/{username}")
+  public ResponseEntity<ResponseDto<List<PostDto>>> getPostsByUsername(@PathVariable String username) {
+    try {
+      List<Post> posts = postService.getPostsByUsername(username);
+
+      List<PostDto> postsDto = posts.stream().map((post) -> new PostDto(post.getId(), 
+        post.getMessage(), post.getCreatedDate(), post.getCreatedTime(), post.getPerson())).collect(Collectors.toList()); 
+      
+      ResponseDto<List<PostDto>> res = new ResponseDto<List<PostDto>>("Founded sucessfully", postsDto);
+
+      return ResponseEntity.status(HttpStatus.OK).body(res);
+    } catch (Exception e) {
+      ResponseDto<List<PostDto>> res = new ResponseDto<List<PostDto>>(e.getMessage(), null);
+
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
+    }
+  }
 }
