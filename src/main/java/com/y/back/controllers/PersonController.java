@@ -63,7 +63,8 @@ public class PersonController {
   }
 
   /**
-   * Person login method, generate and return a token using a password and username.
+   * Person login method, generate and return a token using a password and
+   * username.
    * Object @param authDto
    * Return token @return
    */
@@ -71,19 +72,19 @@ public class PersonController {
   public ResponseEntity<ResponseDto<String>> login(@RequestBody AuthDto authDto) {
     try {
       UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(
-        authDto.username(), authDto.password());
-  
+          authDto.username(), authDto.password());
+
       Authentication auth = authenticationManager.authenticate(usernamePassword);
-  
+
       Person person = (Person) auth.getPrincipal();
       String token = tokenService.generateToken(person);
-  
+
       ResponseDto<String> res = new ResponseDto<String>("Authenticated!", token);
-  
+
       return ResponseEntity.status(HttpStatus.OK).body(res);
     } catch (Exception e) {
       ResponseDto<String> res = new ResponseDto<String>(e.getMessage(), null);
-      
+
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
   }
@@ -94,15 +95,17 @@ public class PersonController {
    * Object @return
    */
   @GetMapping("/person/{username}")
-  public ResponseEntity<ResponseDto<UserDetails>> getUserByUsername(@PathVariable String username) {
+  public ResponseEntity<ResponseDto<PersonDto>> getPersonByUsername(@PathVariable String username) {
     try {
       UserDetails person = personService.loadUserByUsername(username);
-
-      ResponseDto<UserDetails> res = new ResponseDto<UserDetails>("Found Sucessfully.", person);
+      Person ps = (Person) person;
+      PersonDto psDto = new PersonDto(ps.getUsername(), ps.getEmail(),
+          ps.getCreatedDate(), ps.getCreatedTime(), ps.getRole());
+      ResponseDto<PersonDto> res = new ResponseDto<PersonDto>("Found Sucessfully.", psDto);
 
       return ResponseEntity.status(HttpStatus.OK).body(res);
     } catch (Exception e) {
-      ResponseDto<UserDetails> res = new ResponseDto<UserDetails>("User not found.", null);
+      ResponseDto<PersonDto> res = new ResponseDto<PersonDto>("User not found.", null);
 
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(res);
     }
