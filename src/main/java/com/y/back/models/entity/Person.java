@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 /**
@@ -44,6 +45,9 @@ public class Person implements UserDetails {
 
   @Column(name = "role")
   private String role;
+
+  @OneToMany(mappedBy = "person")
+  private List<Post> posts;
 
   /**
    * Constructor.
@@ -161,5 +165,13 @@ public class Person implements UserDetails {
   @Override
   public boolean isEnabled() {
     return true;
+  }
+
+  public List<Post> getPosts() {
+    return posts;
+  }
+
+  public void setPosts(List<Post> posts) {
+    this.posts = posts;
   }
 }
